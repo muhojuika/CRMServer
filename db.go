@@ -201,7 +201,18 @@ func CompeteTask(id string)(string, error){
 	if err != nil{
 		panic(err)
 	}
-	_, err = db.Query("update tasks set status=1 WHERE id=$2", id)
+	_, err = db.Exec("update tasks set status=1 where id=$1", id)
+	if err != nil{
+		return "error", err
+	}
+	return "complete", nil
+}
+func DeleteTask(id string)(string, error){
+	db, err := sql.Open("sqlite3",dbName)
+	if err != nil{
+		panic(err)
+	}
+	_, err = db.Exec("delete from tasks where id=$1", id)
 	if err != nil{
 		return "error", err
 	}

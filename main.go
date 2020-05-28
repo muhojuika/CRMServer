@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 )
-
 type User struct {
 	id int
 	login string
@@ -28,7 +27,6 @@ type Task struct {
 	status string
 }
 
-var Users = []User{}
 const Server_adress string = "localhost:9000"//82.146.63.120
 
 func GetLogHandler(w http.ResponseWriter, r *http.Request){
@@ -164,6 +162,20 @@ func GetTaskListForUserHandler(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w, msg)
 	}
 }
+func DeleteTaskHandler(w http.ResponseWriter, r *http.Request){
+	log.Println("path", r.URL.Path, r.RemoteAddr)
+	r.ParseForm()
+	id:= r.Form.Get("task_id")
+	msg, err:=DeleteTask(id)
+	if err!=nil{
+		log.Println(err.Error())
+		fmt.Fprintf(w, "error:Ошибка данных -("+err.Error()+")")
+	}
+	if msg!=""{
+		fmt.Fprintf(w, msg)
+	}
+}
+
 func main()  {
 	go http.HandleFunc("/login", LoginHandler)
 	go http.HandleFunc("/register", RegisterUserHandler)
@@ -174,9 +186,9 @@ func main()  {
 	go http.HandleFunc("/task_list", GetTaskListHandler)
 	go http.HandleFunc("/tasks_forUS", GetTaskListForUserHandler)
 	go http.HandleFunc("/complete_task", TaskCompleteHandler)
+	go http.HandleFunc("/delete_task", DeleteTaskHandler)
 	log.Println("Server starting on",Server_adress)
 	err := http.ListenAndServe(Server_adress, nil)
-
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
