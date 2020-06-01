@@ -131,10 +131,16 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request){
 	t.userT = r.Form.Get("userT")
 	t.pr = r.Form.Get("pr")
 	t.status = r.Form.Get("status")
-	err:=RegisterTaskLog(t)
+	err:= RegisterTask(t)
 	if err!=nil{
 		log.Println(err.Error())
 		fmt.Fprintf(w, "error:Ошибка данных -("+err.Error()+")")
+	}
+	i,_:= strconv.Atoi(t.userF)
+	us, err:= GetUser(i)
+	err = RegisterLog(3,us)
+	if err!=nil{
+		log.Println(err.Error())
 	}
 	fmt.Fprintf(w, "Complete")
 }
@@ -175,6 +181,32 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w, msg)
 	}
 }
+func EditTaskHandler(w http.ResponseWriter, r *http.Request){
+	var t Task
+	r.ParseForm()
+	log.Println("path", r.URL.Path, r.RemoteAddr)
+	t.id = r.Form.Get("id")
+	t.name = r.Form.Get("name")
+	t.desc = r.Form.Get("des")
+	t.time_cr = r.Form.Get("timeC")
+	t.time_work = r.Form.Get("timeW")
+	t.userF = r.Form.Get("userF")
+	t.userT = r.Form.Get("userT")
+	t.pr = r.Form.Get("pr")
+	t.status = r.Form.Get("status")
+	err:= EditTask(t)
+	if err!=nil{
+		log.Println(err.Error())
+		fmt.Fprintf(w, "error:Ошибка данных -("+err.Error()+")")
+	}
+	//i,_:= strconv.Atoi(t.userF)
+	//us, err:= GetUser(i)
+	//err = RegisterLog(3,us)
+	//if err!=nil{
+	//	log.Println(err.Error())
+	//}
+	fmt.Fprintf(w, "Complete")
+}
 
 func main()  {
 	go http.HandleFunc("/login", LoginHandler)
@@ -187,6 +219,7 @@ func main()  {
 	go http.HandleFunc("/tasks_forUS", GetTaskListForUserHandler)
 	go http.HandleFunc("/complete_task", TaskCompleteHandler)
 	go http.HandleFunc("/delete_task", DeleteTaskHandler)
+	go http.HandleFunc("/edit_task", EditTaskHandler)
 	log.Println("Server starting on",Server_adress)
 	err := http.ListenAndServe(Server_adress, nil)
 	if err != nil {

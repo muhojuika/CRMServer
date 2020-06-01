@@ -59,13 +59,16 @@ func RegisterLog(event_type int, user User)error{ //
 	}
 	switch event_type {
 	case 0:
-		eventName = "Auth user: "+user.login+"  Time: "+ time.Now().Format(time.RFC822)
+		eventName = "Вход пользователя: "+user.login+"  Time: "+ time.Now().Format(time.RFC822)
 		break
 	case 1:
 		eventName = "Create user: "+user.login+"  Time: "+ time.Now().Format(time.RFC822)
 		break
 	case 2:
-		eventName = "Clear Table: "+user.login+"  Time: "+ time.Now().Format(time.RFC822)
+		eventName = "Полная очистка: "+user.login+"  Time: "+ time.Now().Format(time.RFC822)
+		break
+	case 3:
+		eventName = "Создана задача: "+user.login+"  Time: "+ time.Now().Format(time.RFC822)
 		break
 
 	}
@@ -137,7 +140,7 @@ func GetUserList()(string, error){
 	return msg, nil
 
 }
-func RegisterTaskLog(t Task)error{ //
+func RegisterTask(t Task)error{ //
 	db, err := sql.Open("sqlite3",dbName)
 	if err != nil{
 		panic(err)
@@ -217,4 +220,18 @@ func DeleteTask(id string)(string, error){
 		return "error", err
 	}
 	return "complete", nil
+}
+func EditTask(t Task) error{
+	db, err := sql.Open("sqlite3",dbName)
+	if err != nil{
+		panic(err)
+	}
+	//
+	//,
+	n, err:= db.Exec("update tasks set name=$1, description=$2, time_create=$3, time_work=$4, userT_id=$5, userF_id=$6, prir=$7 where id=$8", t.name,t.desc, t.time_cr, t.time_work, t.userT, t.userF, t.pr, t.id)
+	if err != nil{
+		return err
+	}
+	log.Println(n.RowsAffected())
+	return nil
 }
