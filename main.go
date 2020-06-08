@@ -95,7 +95,7 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w, err.Error())
 		return
 	}
-	fmt.Fprintf(w, "Complete")
+	fmt.Fprintf(w, "Пользователь зарегистрирован!")
 }
 func TaskCompleteHandler(w http.ResponseWriter, r *http.Request){
 	r.ParseForm()
@@ -142,7 +142,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request){
 	if err!=nil{
 		log.Println(err.Error())
 	}
-	fmt.Fprintf(w, "Complete")
+	fmt.Fprintf(w, "Задача успешно создана!")
 }
 func GetTaskListHandler(w http.ResponseWriter, r *http.Request){
 	log.Println("path", r.URL.Path, r.RemoteAddr)
@@ -178,7 +178,7 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w, "error:Ошибка данных -("+err.Error()+")")
 	}
 	if msg!=""{
-		fmt.Fprintf(w, msg)
+		fmt.Fprintf(w, "Задача успешно удалена!")
 	}
 }
 func EditTaskHandler(w http.ResponseWriter, r *http.Request){
@@ -205,7 +205,7 @@ func EditTaskHandler(w http.ResponseWriter, r *http.Request){
 	//if err!=nil{
 	//	log.Println(err.Error())
 	//}
-	fmt.Fprintf(w, "Complete")
+	fmt.Fprintf(w, "Задача успешно изменена")
 }
 
 func main()  {
