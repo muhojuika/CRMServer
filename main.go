@@ -25,6 +25,7 @@ type Task struct {
 	userF string
 	pr string
 	status string
+	report string
 }
 
 const Server_adress string = "localhost:9000"//82.146.63.120
@@ -101,7 +102,8 @@ func TaskCompleteHandler(w http.ResponseWriter, r *http.Request){
 	r.ParseForm()
 	log.Println("path", r.URL.Path, r.RemoteAddr)
 	id:= r.Form.Get("id")
-	_, err:= CompeteTask(id)
+	rp:= r.Form.Get("report")
+	_, err:= CompeteTask(id, rp)
 	if err!=nil{
 		log.Println(err.Error())
 		fmt.Fprintf(w, "error:Ошибка данных -("+err.Error()+")")
@@ -131,6 +133,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request){
 	t.userT = r.Form.Get("userT")
 	t.pr = r.Form.Get("pr")
 	t.status = r.Form.Get("status")
+	t.report = " "
 	err:= RegisterTask(t)
 	if err!=nil{
 		log.Println(err.Error())

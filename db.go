@@ -146,8 +146,8 @@ func RegisterTask(t Task)error{ //
 		panic(err)
 	}
 
-	_, err = db.Exec("insert into tasks(name, description, time_create, time_work, userF_id, userT_id, prir, status)  values  ($1,$2,$3,$4,$5,$6,$7,$8)",
-		t.name, t.desc, t.time_cr, t.time_work, t.userF, t.userT, t.pr, t.status)
+	_, err = db.Exec("insert into tasks(name, description, time_create, time_work, userF_id, userT_id, prir, status, report)  values  ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+		t.name, t.desc, t.time_cr, t.time_work, t.userF, t.userT, t.pr, t.status, t.report)
 	if err!=nil{
 		return err
 	}
@@ -165,12 +165,12 @@ func GetTasksList()(string, error){
 	}
 	for rows.Next(){
 		var ts Task
-		err := rows.Scan(&ts.id, &ts.name, &ts.desc, &ts.time_cr, &ts.time_work, &ts.userT, &ts.userF, &ts.pr, &ts.status)
+		err := rows.Scan(&ts.id, &ts.name, &ts.desc, &ts.time_cr, &ts.time_work, &ts.userT, &ts.userF, &ts.pr, &ts.status, &ts.report)
 		if err != nil {
 			log.Println(err)
 			return "", err
 		}
-		msg+=ts.id+":"+ts.name+":"+ts.desc+":"+ts.time_cr+":"+ts.time_work+":"+ts.userT+":"+ts.userF+":"+ts.pr+":"+ts.status+";"
+		msg+=ts.id+":"+ts.name+":"+ts.desc+":"+ts.time_cr+":"+ts.time_work+":"+ts.userT+":"+ts.userF+":"+ts.pr+":"+ts.status+":"+ts.report+";"
 	}
 	msg+="}"
 
@@ -188,23 +188,23 @@ func GetTasksListForUser(user_id string)(string, error){
 	}
 	for rows.Next(){
 		var ts Task
-		err := rows.Scan(&ts.id, &ts.name, &ts.desc, &ts.time_cr, &ts.time_work, &ts.userT, &ts.userF, &ts.pr, &ts.status)
+		err := rows.Scan(&ts.id, &ts.name, &ts.desc, &ts.time_cr, &ts.time_work, &ts.userT, &ts.userF, &ts.pr, &ts.status, &ts.report)
 		if err != nil {
 			log.Println(err)
 			return "", err
 		}
-		msg+=ts.id+":"+ts.name+":"+ts.desc+":"+ts.time_cr+":"+ts.time_work+":"+ts.userT+":"+ts.userF+":"+ts.pr+":"+ts.status+";"
+		msg+=ts.id+":"+ts.name+":"+ts.desc+":"+ts.time_cr+":"+ts.time_work+":"+ts.userT+":"+ts.userF+":"+ts.pr+":"+ts.status+":"+ts.report+";"
 	}
 	msg+="}"
 
 	return msg, nil
 }
-func CompeteTask(id string)(string, error){
+func CompeteTask(id string, rp string)(string, error){
 	db, err := sql.Open("sqlite3",dbName)
 	if err != nil{
 		panic(err)
 	}
-	_, err = db.Exec("update tasks set status=1 where id=$1", id)
+	_, err = db.Exec("update tasks set status=1, report=$1 where id=$2",rp, id)
 	if err != nil{
 		return "error", err
 	}
